@@ -3,7 +3,6 @@ FROM debian:jessie
 RUN groupadd -r mysql && useradd -r -g mysql mysql
 
 ENV GOSU_VERSION 1.7
-ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends apt-utils ca-certificates wget git ca-certificates automake libtool \
@@ -21,27 +20,14 @@ RUN set -x \
 RUN mkdir /docker-entrypoint-initdb.d
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		pwgen \
-		openssl \
-# FATAL ERROR: please install the following Perl modules before executing /usr/local/mysql/scripts/mysql_install_db:
-# File::Basename
-# File::Copy
-# Sys::Hostname
-# Data::Dumper
-		perl \
+	pwgen \
+	openssl \
+	perl \
 	&& rm -rf /var/lib/apt/lists/*
 
-#RUN set -ex; \
-	#key='A4A9406876FCBD3C456770C88C718D3B5072E1F5'; \
-	#export GNUPGHOME="$(mktemp -d)"; \
-	#gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	#gpg --export "$key" > /etc/apt/trusted.gpg.d/mysql.gpg; \
-	#rm -r "$GNUPGHOME"; \
-	#apt-key list > /dev/null
-
-ENV MYSQL_MAJOR 5.7
-ENV MYSQL_VERSION 5.7.19-1debian8
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
+ENV MYSQL_MAJOR 5.7 \
+    MYSQL_VERSION 5.7.19-1debian8 \
+    MYSQL_ALLOW_EMPTY_PASSWORD=true \
     MYSQL_DATABASE=sysbench \
     MYSQL_CONFIG=/etc/mysql/mysql.conf.d/mysqld.cnf \
     MYSQL_BUFFERSIZE=1G \
@@ -62,8 +48,6 @@ RUN { \
 	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
 	&& chmod 777 /var/run/mysqld
 
-# comment out a few problematic configuration values
-# don't reverse lookup hostnames, they are usually another container
 RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/mysql.conf.d/mysqld.cnf \
 	&& echo '[mysqld]\nskip-host-cache\nskip-name-resolve' > /etc/mysql/conf.d/docker.cnf
 
