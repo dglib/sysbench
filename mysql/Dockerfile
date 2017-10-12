@@ -5,12 +5,13 @@ RUN groupadd -r mysql && useradd -r -g mysql mysql
 ENV GOSU_VERSION 1.7
 
 RUN set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends apt-utils ca-certificates wget git ca-certificates automake libtool \
-        make vim pkg-config libmysqlclient-dev && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y --no-install-recommends pwgen apt-utils ca-certificates wget git \
+	 ca-certificates automake libtool openssl perl  make vim pkg-config libmysqlclient-dev \
+	&& rm -rf /var/lib/apt/lists/* \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
 	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
 	&& chmod +x /usr/local/bin/gosu \
@@ -19,15 +20,10 @@ RUN set -x \
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	pwgen \
-	openssl \
-	perl \
-	&& rm -rf /var/lib/apt/lists/*
+ENV MYSQL_MAJOR 5.7
+ENV MYSQL_VERSION 5.7.19-1debian8
 
-ENV MYSQL_MAJOR 5.7 \
-    MYSQL_VERSION 5.7.19-1debian8 \
-    MYSQL_ALLOW_EMPTY_PASSWORD=true \
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
     MYSQL_DATABASE=sysbench \
     MYSQL_CONFIG=/etc/mysql/mysql.conf.d/mysqld.cnf \
     MYSQL_BUFFERSIZE=1G \
@@ -54,7 +50,9 @@ RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/mysql.conf.d/mysqld.cnf \
 VOLUME /var/lib/mysql
 
 COPY docker-entrypoint.sh /usr/local/bin/
+
 RUN ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 3306
