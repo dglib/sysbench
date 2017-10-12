@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM shaker242/mysql:part1 
 
 RUN set -x \
         && apt-get update \
