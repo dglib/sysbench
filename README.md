@@ -8,7 +8,7 @@ MySQL 5.7 Github repo: https://github.com/docker-library/mysql/blob/0590e4efd2b3
 # Running Sysbench
 This version of sysbench runs as two containers that must be joined by a private network, or rather, a network that isolates these two containers. This allows you to run multiple instances for loading. However, the Dockerfile specifies that test will run for 1200 seconds; if you want it to run longer you'll need to edit it.  For this reason, the compose.yml file does work; however, 1 to 1 bindings do not as replicas. It will spin up 10 databases and attempt to spin up 10 sysbench instances and it did load my system - but it's just not clean.  If you're skilled, I'll take any advice how to make this possible.
 
-## To run the instances manually, you must first create a network "docker network create --attachable $net" and then join each runtime container to this network along with specifing the mysql hostname. 
+### To run the instances manually, you must first create a network "docker network create --attachable $net" and then join each runtime container to this network along with specifing the mysql hostname. 
 
 Fire up the database with "docker run -tid -h mysql --name mysql --network=$net -p 3306:3306 --env-file MyENV mysql:5.7" 
 Fire up sysbench with "docker run -tid --name sysbench --network=$net shaker242/sysbench:latest"
