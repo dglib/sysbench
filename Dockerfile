@@ -4,7 +4,7 @@ LABEL maintainer="shaker242@gmail.com"
 
 RUN apt-get update \
         && apt-get upgrade \
-        && apt-get install -y wget perl libmysqlclient20 --no-install-recommends
+        && apt-get install -y wget libmysqlclient20 --no-install-recommends
 
 RUN wget http://repo.percona.com/apt/pool/main/s/sysbench/sysbench_1.0.9-1.xenial_amd64.deb \
         && dpkg -i sysbench_1.0.9-1.xenial_amd64.deb \
