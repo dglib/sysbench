@@ -5,16 +5,16 @@ services:
         image: mysql:5.7
         deploy:
            mode: replicated
-           replicas: 10
+           replicas: 1
         networks:
           - dbnet
         hostname: mysql
         ports:
-          - 3306:3306 
+          - 3306:3306
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
             MYSQL_DATABASE: 'sysbench'
-            MYSQL_BUFFERSIZE: '1G'
+            MYSQL_BUFFERSIZE: '3G'
             MYSQL_LOGSIZE: '256M'
             MYSQL_FLUSHLOG: '1'
             MYSQL_FLUSHMETHOD: 'O_DIRECT'
@@ -28,7 +28,7 @@ services:
         image: shaker242/sysbench:latest
         deploy:
             mode: replicated
-            replicas: 10
+            replicas: 1
 
 networks:
    dbnet:
