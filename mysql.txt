@@ -1,0 +1,1 @@
+docker run -d --rm -m 2G --memory-swap -1 --network-alias=mysql --network=dbnet$i -p :3306 --env MYSQL_ALLOW_EMPTY_PASSWORD=yes --env MYSQL_DATABASE=sysbench --env MYSQL_BUFFERSIZE=2G --env MYSQL_LOGSIZE=256M --env MYSQL_FLUSHLOG=1 --env MYSQL_FLUSHMETHOD=fsync mysql:5.7
